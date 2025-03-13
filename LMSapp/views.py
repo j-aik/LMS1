@@ -9,7 +9,7 @@ import re
 # Create your views here.
 
 def home(request):
-    return render(request,'index.html')
+    return render(request,'home.html')
 
 def student(request):
     f = request.user.username
@@ -68,7 +68,7 @@ def staffstudent(request):
     return render(request, 'staff.html', {'f': f, 'f1': f1 , 'h1':h1})
 
 
-def admin1(request,id=0):
+def admin1(request,id=0): #taken for the 2ndu
     f = request.user.username
     f1 = CustomUser.objects.all()
     print(id)
@@ -88,7 +88,7 @@ def admin1(request,id=0):
            print(form)
            return render(request, 'edit_form.html', {'form': form})
     except:
-        return render(request, 'admin1.html', {'f': f, 'f1': f1})
+        return render(request, 'index.html', {'f': f, 'f1': f1})
 
 
 def adminedit(request,p):
@@ -129,24 +129,23 @@ def u1login(request):
             return admin1(request,id=0)
         else:
             f = "your password is error"
-            return render(request, 'login.html', {'f': f})
-    return render(request, 'login.html',{'f':f})
-
-def delete(request,id):
-    f = CustomUser.objects.get(id=id)
-    f.delete()
-    return admin1(request)
+            return render(request, 'sign-in.html', {'f': f})
+    return render(request, 'sign-in.html',{'f':f})
 
 
-def active(request,id):
-     f = CustomUser.objects.get(id=id)
-     if f.is_active == True:
-         f.is_active = False
-         f.save()
-     else:
-         f.is_active = True
-         f.save()
-     return admin1(request,id=0)
+
+
+def active(request, student_id, action):
+    student = get_object_or_404(Student, id=student_id)
+    user = student.user
+
+    if action == "activate":
+        user.is_active = True
+    elif action == "deactivate":
+        user.is_active = False
+
+    user.save()
+    return adminstudent(request)
 
 def adminparent(request): # only for showing class
     classst = ClassST.objects.all()
@@ -252,7 +251,35 @@ def adminstudent(request): # only for showing class
     student = Student.objects.all()
     classst = ClassST.objects.all()
     sorted_classst = sorted(classst, key=class_sort_key)
-    return render(request,'students.html',{'student':student,'classst':sorted_classst})
+    return render(request,'students.html',{'student':student,'classst':sorted_classst}) # it will show all the studnet deatils in the as,in section
+
+
+def delete(request):
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("selected_students")
+        Student.objects.filter(id__in=selected_ids).delete()
+    return adminstudent(request)
+
+def class_detail(request, p):
+    if request.method == "POST":
+        sort_order = request.POST.get("sort_order", "descending")
+        return redirect("LMSapp:class_detail", p=sort_order)
+
+
+    classst = sorted(ClassST.objects.all(), key=lambda x: x.name)
+
+    # Determine sorting order
+    if p == "ascending":
+        student = Student.objects.all().order_by("enrollment_date")
+    elif p == "descending":
+        student = Student.objects.all().order_by("-enrollment_date")
+    else:
+        student = Student.objects.filter(class_assigned__id=p).order_by("-enrollment_date")
+
+    return render(request, "students.html", {"student": student, "classst": classst, "p": p})  # Pass `p`
+
+
+
 
 def adminstudent1(request,p):  # for showing class class data about usercreation ,edit
     student = Student.objects.filter(class_assigned__name=p)
@@ -413,3 +440,7 @@ def staffclass(request,p):
     l = Staff.objects.get(user=g,class_assigned__name=p)
     print(l)
     return render(request, 'staffsubject.html', {'l':l})
+
+
+def adminstudentcreate(request):
+    return render(request, 'adminuserstudentcreate.html')
