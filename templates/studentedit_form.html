@@ -13,49 +13,75 @@
         <form method="post">
             {% csrf_token %}
 
-            <!-- Date of Birth -->
-            <div class="mb-3">
-                <label class="form-label">Date of Birth</label>
-                <input type="date" class="form-control" name="date_of_birth" value="{{ form.date_of_birth.value|default:'' }}">
-            </div>
-
-            <!-- Class Assigned -->
-            <div class="mb-3">
-    <label class="form-label">Class Assigned</label>
-    <select class="form-select" name="class_assigned">
-        <option value="">Select a class</option>
-        {% for class in form.class_assigned.field.queryset %}
-            <option value="{{ class.id }}" {% if form.class_assigned.value == class.id %}selected{% endif %}>
-                {{ class.name }}
-            </option>
-        {% endfor %}
-    </select>
-</div>
-
-            <!-- Parent -->
-            <div class="mb-3">
-                <label class="form-label">Parent</label>
-                <input type="text" class="form-control" name="parent" value="{{ form.parent.value|default:'' }}" placeholder="Enter parent's name">
-            </div>
-
-            <!-- Attendance Percentage -->
-            <div class="mb-3">
-                <label class="form-label">Attendance Percentage</label>
-                <input type="number" class="form-control" name="attendence_percentage" min="0" max="100" value="{{ form.attendence_percentage.value|default:'' }}">
-            </div>
-
-            <!-- User Details Section -->
-            <h3 class="mt-4 text-center">User Details</h3>
-
+            <!-- User Details -->
+            <h4 class="mb-3">Student's User Information</h4>
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" value="{{ user_form.username.value|default:'' }}" placeholder="Enter username">
+                {{ form3.username }}
+                {% if form3.errors.username %}
+                    <div class="text-danger">{{ form3.errors.username }}</div>
+                {% endif %}
             </div>
-
+            <div class="mb-3">
+                <label class="form-label">First Name</label>
+                {{ form3.first_name }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                {{ form3.last_name }}
+            </div>
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" value="{{ user_form.email.value|default:'' }}" placeholder="Enter email">
+                {{ form3.email }}
             </div>
+
+            <!-- Student Information -->
+            <h4 class="mb-3 mt-4">Student Information</h4>
+            <div class="mb-3">
+                <label class="form-label">Date of Birth</label>
+                {{ form.date_of_birth }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Class Assigned</label>
+                {{ form.class_assigned }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Attendance Percentage</label>
+                {{ form.attendence_percentage }}
+            </div>
+
+
+            <!-- Parent Information -->
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form4.username }}
+            </div>
+            <h4 class="mb-3 mt-4">Parent Details</h4>
+             <div class="mb-3">
+                <label class="form-label">First Name</label>
+                {{ form4.first_name }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                {{ form4.last_name }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                {{ form4.email }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                {{ form2.phone_number }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                {{ form2.address }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Class Assigned</label>
+                {{ form2.class_assigned }}
+            </div>
+
 
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary w-100">Save Changes</button>

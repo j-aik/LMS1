@@ -90,22 +90,86 @@ def admin1(request,id=0): #taken for the 2ndu
     except:
         return render(request, 'index.html', {'f': f, 'f1': f1})
 
+# for editing students by the admin for thr 2nd LMS
+# def adminedit(request,p):
+#
+#         student = get_object_or_404(Student, id=p)
+#         parent = student.parent  # No need to query again
+#         user = student.user  # No need to query again
+#         parent_user = parent.user
+#         if request.method == "POST":
+#             form = StudentEditForm(request.POST, instance=student)
+#             form2 = ParentEditForm(request.POST,instance=parent)
+#             form3 = UserEditForm(request.POST,instance=user)
+#             form4 = UserEditForm(request.POST,instance=parent_user)
+#             print("Student Form Errors:", form.errors)
+#             print("Student Form Errors:", form3.errors)
+#             print("Parent Form Errors:", form2.errors)
+#             print("Parent User Form Errors:", form4.errors)
+#             if form.is_valid() and form2.is_valid() and form3.is_valid() and form4.is_valid():
+#                 form.save()
+#                 form2.save()
+#                 form3.save()
+#                 form4.save()
+#                 return admin1(request) # Redirect to student list or another appropriate page
+#         else:
+#             form = StudentEditForm(instance=student)
+#             form2 = ParentEditForm(instance=parent)
+#             form3 = UserEditForm( instance=user)
+#             form4 = UserEditForm( instance=parent_user)
+#         return render(request, 'studentedit_form.html', {'form': form, 'student': student,'form2': form2,'form3':form3,'form4':form4})
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Student, Parent, CustomUser
+from .forms import StudentEditForm, ParentEditForm, UserEditForm
 
-def adminedit(request,p):
-        print("it came here ")
-        f2 = get_object_or_404(Parent, id=p)
-        print(f2)
-        if request.method == "POST":
-            form = UserEditForm(request.POST, instance=f2)
-            if form.is_valid():
-                form.save()
-                return JsonResponse({"success": True})
-            else:
-                return JsonResponse({"success": False, "errors": form.errors})
+def adminstudent(request): # only for showing class
+    student = Student.objects.all()
+    classst = ClassST.objects.all()
+    sorted_classst = sorted(classst, key=class_sort_key)
+    return render(request,'students.html',{'student':student,'classst':sorted_classst}) # it will show all the studnet deatils in the as,in section
+def adminedit(request, p):
+    student = get_object_or_404(Student, id=p)
+    user = student.user
+    parent = student.parent
+    parent_user = parent.user
 
-        else:
-            form = UserEditForm(instance=f2)
-            return render(request, 'parentedit_form.html', {'form': form})
+    if request.method == "POST":
+        form = StudentEditForm(request.POST, instance=student)
+        form3 = UserEditForm(request.POST, instance=user)
+        form2 = ParentEditForm(request.POST, instance=parent)
+        form4 = UserEditForm(request.POST, instance=parent_user)  # Edit parent's user details
+
+        print("Student Form Errors:", form.errors)
+        print("User Form Errors:", form3.errors)
+        if form2:
+            print("Parent Form Errors:", form2.errors)
+        if form4:
+            print("Parent User Form Errors:", form4.errors)
+
+        if form.is_valid() and form3.is_valid() and  form2.is_valid() and  form4.is_valid():
+            form.save()
+            form3.save()
+            if form2:
+                form2.save()
+            if form4:
+                form4.save()
+            return adminstudent(request) # Redirect after saving
+
+    else:
+        form = StudentEditForm(instance=student)
+        form3 = UserEditForm(instance=user)
+        form2 = ParentEditForm(instance=parent)
+        form4 = UserEditForm(instance=parent_user)
+
+    return render(request, 'studentedit_form.html', {
+        'form': form,
+        'form2': form2,
+        'form3': form3,
+        'form4': form4,
+        'student': student,
+    })
+
+
 
 def u1login(request):
     f = ""
@@ -134,7 +198,7 @@ def u1login(request):
 
 
 
-
+# taken for 2ndu in here
 def active(request, student_id, action):
     student = get_object_or_404(Student, id=student_id)
     user = student.user
@@ -149,7 +213,8 @@ def active(request, student_id, action):
 
 def adminparent(request): # only for showing class
     classst = ClassST.objects.all()
-    return render(request,'adminparent.html',{'classst':classst})
+    parent = Parent.objects.all()
+    return render(request,'adminparent.html',{'classst':classst,'parent':parent})
 
 def adminparent1(request,p): # for showing class class data about usercreation ,edit
     parent = Parent.objects.filter(class_assigned__name=p)
@@ -247,11 +312,7 @@ def class_sort_key(class_obj):
     return (float('inf'), "")  # Handle unexpected cases
 
 
-def adminstudent(request): # only for showing class
-    student = Student.objects.all()
-    classst = ClassST.objects.all()
-    sorted_classst = sorted(classst, key=class_sort_key)
-    return render(request,'students.html',{'student':student,'classst':sorted_classst}) # it will show all the studnet deatils in the as,in section
+
 
 
 def delete(request):

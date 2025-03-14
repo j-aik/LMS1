@@ -4,15 +4,31 @@ from .models import Staff, Subject, ClassST
 
 class UserEditForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
-        fields = ['username', 'first_name', 'last_name', 'email']  # Add fields you want to edit
+        model = CustomUser  # Ensure this is correctly imported
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if CustomUser.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("A user with that username already exists.")
+        return username
 
 class ParentEditForm(forms.ModelForm):
     class Meta:
         model =  Parent
-        fields = "__all__"
-        exclude = ['user']
+        fields = ['phone_number', 'address', 'class_assigned']
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter address'}),
+            'class_assigned': forms.Select(attrs={'class': 'form-select'}),
+        }
+
 
 class StaffEditForm(forms.ModelForm):
     class Meta:
@@ -21,34 +37,19 @@ class StaffEditForm(forms.ModelForm):
         exclude = ['user']
 
 
-    # subject = forms.ModelMultipleChoiceField(
-    #   queryset=Subject.objects.none(),
-    #   widget=forms.CheckboxSelectMultiple,
-    #   required=False
-    # )
-    #
-    # class_assigned = forms.ModelMultipleChoiceField(
-    #    queryset=ClassST.objects.none(),
-    #    widget=forms.CheckboxSelectMultiple,
-    #    required=False
-    # )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Set the querysets after initialization
-        self.fields['subject'].queryset = Subject.objects.all()
-        self.fields['class_assigned'].queryset = ClassST.objects.all()
-    # Set the querysets after initialization
-    #    self.fields['subject'].queryset = Subject.objects.all()
-    #    self.fields['class_assigned'].queryset = ClassST.objects.all()
-
 class StudentEditForm(forms.ModelForm):
     class_assigned = forms.ModelChoiceField(
         queryset=ClassST.objects.all(),
         empty_label="Select a class",
         widget=forms.Select(attrs={"class": "form-select"})
     )
+
     class Meta:
-        model =  Student
-        fields = "__all__"
-        exclude = ['user']
+        model = Student
+        fields = ['date_of_birth', 'class_assigned', 'parent', 'attendence_percentage']  # Exclude 'user'
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'class_assigned': forms.Select(attrs={'class': 'form-select'}),
+            'parent': forms.Select(attrs={'class': 'form-select'}),
+            'attendence_percentage': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100'}),
+        }

@@ -7,6 +7,4 @@ app_name = "librareyapp"
 
 urlpatterns = [
     path('librarey',views.librarey,name="librarey"),
-
-
 ]
