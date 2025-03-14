@@ -1,3 +1,6 @@
+
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -31,26 +34,59 @@
     <link rel="stylesheet" href="{% static 'css/jquery-jvectormap-2.0.5.css' %}">
     <!-- Main css -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <style>
-    /* Gradient Button Styling */
-    .btn-gradient {
-        display: inline-block;
-        background: black;
-        color: white;
-        text-decoration: none;
-        font-size: 70px;
-        font-weight: bold;
-        padding: 10px 20px;
-        border-radius: 10px;
-        transition: 0.3s ease-in-out;
-        border: none;
-    }
 
-    .btn-gradient:hover {
-        background: linear-gradient(to right, #2196F3, #4CAF50);
-        transform: scale(1.05);
-    }
-</style>
+            <style>
+        /* Gradient Button */
+        .btn-gradient {
+            background: linear-gradient(to right, #4CAF50, #2196F3);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(to right, #2196F3, #4CAF50);
+        }
+
+        /* Input Borders */
+        .border-primary {
+            border: 2px solid #007bff !important;
+            border-radius: 5px;
+        }
+
+        .border-success {
+            border: 2px solid #28a745 !important;
+            border-radius: 5px;
+        }
+
+        /* Shadow Box */
+        .shadow-lg {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Page Background */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Container Styling */
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        #newClassSection {
+        display: block;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -120,7 +156,13 @@
                 <li class="sidebar-menu__item">
                     <a href="students.html" class="sidebar-menu__link">
                         <span class="icon"><i class="ph ph-users-three"></i></span>
-                        <span class="text">Students</span>
+                          <span class="text">Students</span>
+                    </a>
+                </li>
+                 <li class="sidebar-menu__item">
+                    <a href="students.html" class="sidebar-menu__link">
+                        <span class="icon"><i class="ph ph-users-three"></i></span>
+                          <span class="text" style="margin-left:2px;">Students creation</span>
                     </a>
                 </li>
                 <li class="sidebar-menu__item">
@@ -465,18 +507,14 @@
     <ul class="flex-align gap-4">
         <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
         <li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-        <li><span class="text-main-600 fw-normal text-15">Parent</span></li>
+        <li><span class="text-main-600 fw-normal text-15">Students</span></li>
     </ul>
 </div>
 <!-- Breadcrumb End -->
                 <!-- Breadcrumb Start -->
 <div class="breadcrumb mb-24">
     <ul class="flex-align gap-4">
-        <li>
-            <a href="{% url 'LMSapp:adminparent1create' %}" class="btn btn-gradient px-4 py-2 text-white text-15 fw-bold">
-                ADD PARENT
-            </a>
-        </li>
+        <li><a href="{% url 'LMSapp:adminstudentcreate'  %}" class="text-gray-200 fw-normal text-15 hover-text-main-600">ADD STUDENT</a></li>
     </ul>
 </div>
 <!-- Breadcrumb End -->
@@ -487,238 +525,95 @@
                         <span class="text-inherit">Sort by: </span>
                         <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
                             <span class="text-lg"><i class="ph ph-funnel-simple"></i></span>
-
-<form method="POST" action="{% url 'LMSapp:class_detail_parent' 'p' %}">
-    {% csrf_token %}
-    <select name="sort_order" class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center" onchange="this.form.submit()">
-        <option value="ascending" {% if p == "ascending" %}selected{% endif %}>Date Ascending</option>
-        <option value="descending" {% if p == "descending" %}selected{% endif %}>Date Descending</option>
-        {% for class_item in classst %}
-            <option value="{{ class_item.id }}" {% if p == class_item.id|stringformat:"s" %}selected{% endif %}>
-                {{ class_item.name }}
-            </option>
-        {% endfor %}
-    </select>
-</form>
-
                         </div>
                     </div>
-                    <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
-                        <span class="text-lg"><i class="ph ph-layout"></i></span>
-                        <select class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center" id="exportOptions">
-                            <option value="" selected disabled>Export</option>
-                            <option value="csv">CSV</option>
-                            <option value="json">JSON</option>
-                        </select>
-                    </div>
                 </div>
-                <!-- Breadcrumb Right End -->
-            </div>
+    <div class="container">
+        <div class="form-container shadow-lg">
+            <h2 class="text-center text-primary mb-4">Parent Registration</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- User Details -->
+                <h4 class="text-primary border-bottom pb-2">User Details</h4>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Username</label>
+                    <input type="text" name="username" class="form-control border-primary" placeholder="Enter username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input type="email" name="email" class="form-control border-primary" placeholder="Enter email" required>
+                </div>
 
 
-            <div class="card overflow-hidden">
-                <div class="card-body p-0 overflow-x-auto">
-                <form method="POST" action="{% url 'LMSapp:delete' %}">
-                     {% csrf_token %}
-                    <table id="studentTable" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th class="fixed-width">
-                                    <div class="form-check">
-                                        <input class="form-check-input border-gray-200 rounded-4" type="checkbox" id="selectAll">
-                                    </div>
-                                </th>
-                                <th class="h6 text-gray-300">Students</th>
-                                <th class="h6 text-gray-300">Email ID</th>
-                                <th class="h6 text-gray-300">Courses</th>
-                                <th class="h6 text-gray-300">Certificates Earned</th>
-                                <th class="h6 text-gray-300">Active</th>
-                                <th class="h6 text-gray-300">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in parent %}
-                             <tr>
-                <td class="fixed-width">
-                    <div class="form-check">
-                        <input class="form-check-input border-gray-200 rounded-4 student-checkbox"
-                               type="checkbox" name="selected_students" value="{{ i.id }}">
-                    </div>
-                </td>
-                <td>
-                    <div class="flex-align gap-8">
-                        <img src="assets/images/thumbs/student-img1.png" alt="" class="w-40 h-40 rounded-circle">
-                        <span class="h6 mb-0 fw-medium text-gray-300">{{ i.user.username }}</span>
-                    </div>
-                </td>
-                <td><span class="h6 mb-0 fw-medium text-gray-300">{{ i.user.email }}</span></td>
-                <td><span class="h6 mb-0 fw-medium text-gray-300">12</span></td>
-                <td><span class="h6 mb-0 fw-medium text-gray-300">10</span></td>
-                <td>
-                    <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                        <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
-                         {% if True %}
-                            <p>ACTIVE</p>
-                         {% else %}
-                             <p>NON ACTIVE</p>
-                          {% endif %}
-                    </span>
-                </td>
-                <td>
-                    <a href="{% url 'LMSapp:adminparent1' i.id %}" class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white">View More</a>
-                </td>
-            </tr>
-                        {% endfor %}
-                        </tbody>
-                         </table>
-                         <button type="submit" class="btn btn-danger mt-3">Delete Selected</button>
-</form>
-                </div>
-                <div class="card-footer flex-between flex-wrap">
-                    <span class="text-gray-900">Showing 1 to 10 of 12 entries</span>
-                    <ul class="pagination flex-align flex-wrap">
-                        <li class="page-item active">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">...</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">8</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">9</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="#">10</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
 
-        </div>
-        <div class="dashboard-footer">
-    <div class="flex-between flex-wrap gap-16">
-        <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright Edmate 2024, All Right Reserverd</p>
-        <div class="flex-align flex-wrap gap-16">
-            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">License</a>
-            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">More Themes</a>
-            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Documentation</a>
-            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Support</a>
-        </div>
+                <!-- Parent Details -->
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Phone Number</label>
+                    <input type="text" name="phone_number" class="form-control border-success" placeholder="Enter phone number" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Address</label>
+                    <textarea name="address" class="form-control border-success" rows="3" placeholder="Enter address" required></textarea>
+                </div>
+
+<div id="classDropdown">
+    <div class="mb-3">
+        <label class="form-label fw-bold">Class Assigned</label>
+        <select name="class_assigned" class="form-control border-success" id="classSelect">
+            <option value="">Select Class</option>
+            {% for class in classst %}
+            <option value="{{ class.id }}">{{ class.name }}</option>
+            {% endfor %}
+        </select>
     </div>
 </div>
+
+<!-- New Class Section -->
+<div id="newClassSection">
+    <h4>OR ASSIGN A NEW CLASS</h4>
+    <div class="mb-3">
+        <label class="form-label fw-bold">CLASS</label>
+        <input type="text" name="class1" class="form-control border-success" placeholder="Class">
+    </div>
+</div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Enrollment Date</label>
+                    <input type="date" name="enrollment_date" class="form-control border-success">
+                </div>
+
+                <button type="submit" class="btn btn-gradient btn-lg w-100 mt-4">Save Changes</button>
+            </form>
+        </div>
     </div>
 
-        <!-- Jquery js -->
-    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    <!-- Bootstrap Bundle Js -->
-    <script src="{% static 'js/boostrap.bundle.min.js' %}"></script>
-    <!-- Phosphor Js -->
-    <script src="{% static 'js/phosphor-icon.js' %}"></script>
-    <!-- file upload -->
-    <script src="{% static 'js/file-upload.js' %}"></script>
-    <!-- file upload -->
-    <script src="{% static 'js/plyr.js' %}"></script>
-    <!-- dataTables -->
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js' %}"></script>
-    <!-- full calendar -->
-    <script src="{% static 'js/full-calendar.js' %}"></script>
-    <!-- jQuery UI -->
-    <script src="{% static 'js/jquery-ui.js' %}"></script>
-    <!-- jQuery UI -->
-    <script src="{% static 'js/editor-quill.js' %}"></script>
-    <!-- apex charts -->
-    <script src="{% static 'js/apexcharts.min.js' %}"></script>
-    <!-- Calendar Js -->
-    <script src="{% static 'js/calendar.js' %}"></script>
-    <!-- jvectormap Js -->
-    <script src="{% static 'js/jquery-jvectormap-2.0.5.min.js' %}"></script>
-    <!-- jvectormap world Js -->
-    <script src="{% static 'js/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <!-- Bootstrap JS (for responsive behavior) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+       document.addEventListener("DOMContentLoaded", function () {
+        var classSelect = document.getElementById("classSelect");
+        var classDropdown = document.getElementById("classDropdown");
+        var newClassSection = document.getElementById("newClassSection");
 
-    <!-- main js -->
-    <script src="{% static 'js/main.js' %}"></script>
+        function toggleClassFields() {
+            if (classSelect.value !== "") {
 
-
-
-    <script>
-
-        // ========================== Export Js Start ==============================
-        document.getElementById('exportOptions').addEventListener('change', function() {
-            const format = this.value;
-            const table = document.getElementById('studentTable');
-            let data = [];
-            const headers = [];
-
-            // Get the table headers
-            table.querySelectorAll('thead th').forEach(th => {
-                headers.push(th.innerText.trim());
-            });
-
-            // Get the table rows
-            table.querySelectorAll('tbody tr').forEach(tr => {
-                const row = {};
-                tr.querySelectorAll('td').forEach((td, index) => {
-                    row[headers[index]] = td.innerText.trim();
-                });
-                data.push(row);
-            });
-
-            if (format === 'csv') {
-                downloadCSV(data);
-            } else if (format === 'json') {
-                downloadJSON(data);
+                newClassSection.style.display = "none";
+            } else {
+                // If no class is selected, show the new class section
+                newClassSection.style.display = "block";
             }
-        });
-
-        function downloadCSV(data) {
-            const csv = data.map(row => Object.values(row).join(',')).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'students.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         }
 
-        function downloadJSON(data) {
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'students.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-        // ========================== Export Js End ==============================
-
-        // Table Header Checkbox checked all js Start
-        $('#selectAll').on('change', function () {
-            $('.form-check .form-check-input').prop('checked', $(this).prop('checked'));
-        });
-
-        // Data Tables
-        new DataTable('#studentTable', {
-            searching: false,
-            lengthChange: false,
-            info: false,   // Bottom Left Text => Showing 1 to 10 of 12 entries
-            paging: false, // Pagination False
-            "columnDefs": [
-                { "orderable": false, "targets": [0, 6] } // Disables sorting on the 7th column (index 6)
-            ]
-        });
-    </script>
-
-    </body>
+        classSelect.addEventListener("change", toggleClassFields);
+    });
+</script>
+</body>
 </html>
+

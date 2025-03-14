@@ -13,11 +13,7 @@ class UserEditForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
 
-    def clean_username(self):
-        username = self.cleaned_data.get("username")
-        if CustomUser.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError("A user with that username already exists.")
-        return username
+
 
 class ParentEditForm(forms.ModelForm):
     class Meta:

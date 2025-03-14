@@ -55,6 +55,7 @@ class Parent(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
     class_assigned = models.ForeignKey(ClassST, on_delete=models.CASCADE, null=True,blank=True)
+    enrollment_date = models.DateField(auto_now_add=True, null=True, blank=True)
     def __str__(self):
         return self.user.username
 

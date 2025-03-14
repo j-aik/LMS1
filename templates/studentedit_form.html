@@ -5,86 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Student Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body, html {
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent full-page scrolling */
+        }
+        .container-fluid {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns for Student & Parent */
+            gap: 15px;
+            flex-grow: 1;
+            margin-top: 15px;
+        }
+        .split-section {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            overflow-y: auto; /* Internal scrolling for long content */
+            max-height: calc(90vh - 150px); /* Prevents full-page scrolling */
+        }
+        .form-label {
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container mt-5">
-        <h2 class="mb-4 text-center">Edit Student Details</h2>
-        <form method="post">
+    <div class="container-fluid">
+        <h2 class="text-center my-3">Edit Student Details</h2>
+        <form method="post" class="d-flex flex-column flex-grow-1">
             {% csrf_token %}
 
-            <!-- User Details -->
-            <h4 class="mb-3">Student's User Information</h4>
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                {{ form3.username }}
-                {% if form3.errors.username %}
-                    <div class="text-danger">{{ form3.errors.username }}</div>
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">First Name</label>
-                {{ form3.first_name }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Last Name</label>
-                {{ form3.last_name }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                {{ form3.email }}
-            </div>
+            <div class="form-container">
+                <!-- Student Details Section -->
+                <div class="split-section">
+                    <h4 class="mb-3">Student's User Information</h4>
 
-            <!-- Student Information -->
-            <h4 class="mb-3 mt-4">Student Information</h4>
-            <div class="mb-3">
-                <label class="form-label">Date of Birth</label>
-                {{ form.date_of_birth }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Class Assigned</label>
-                {{ form.class_assigned }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Attendance Percentage</label>
-                {{ form.attendence_percentage }}
-            </div>
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Username</label>
+                            {{ form3.username }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Email</label>
+                            {{ form3.email }}
+                        </div>
+                    </div>
 
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">First Name</label>
+                            {{ form3.first_name }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Last Name</label>
+                            {{ form3.last_name }}
+                        </div>
+                    </div>
 
-            <!-- Parent Information -->
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                {{ form4.username }}
-            </div>
-            <h4 class="mb-3 mt-4">Parent Details</h4>
-             <div class="mb-3">
-                <label class="form-label">First Name</label>
-                {{ form4.first_name }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Last Name</label>
-                {{ form4.last_name }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                {{ form4.email }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Phone Number</label>
-                {{ form2.phone_number }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Address</label>
-                {{ form2.address }}
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Class Assigned</label>
-                {{ form2.class_assigned }}
-            </div>
+                    <h4 class="mb-3 mt-3">Student Information</h4>
 
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Date of Birth</label>
+                            {{ form.date_of_birth }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Class Assigned</label>
+                            {{ form.class_assigned }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <label class="form-label">Attendance Percentage</label>
+                            {{ form.attendence_percentage }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parent Details Section -->
+                <div class="split-section">
+                    <h4 class="mb-3">Parent Details</h4>
+
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Username</label>
+                            {{ form4.username }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Email</label>
+                            {{ form4.email }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">First Name</label>
+                            {{ form4.first_name }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Last Name</label>
+                            {{ form4.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Phone Number</label>
+                            {{ form2.phone_number }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Class Assigned</label>
+                            {{ form2.class_assigned }}
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Address</label>
+                        {{ form2.address }}
+                    </div>
+                </div>
+            </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+            <div class="text-center mt-2">
+                <button type="submit" class="btn btn-primary w-50">Save Changes</button>
+            </div>
         </form>
     </div>
 

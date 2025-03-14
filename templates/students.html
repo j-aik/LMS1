@@ -533,10 +533,10 @@
                 <td>
                     <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
                         <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
-                         {% if True %}
-                            <p>ACTIVE</p>
+                         {% if i.user.is_active == True %}
+                            <a href="{% url 'LMSapp:active' i.id 'deactivate' %}">ACTIVE</a>
                          {% else %}
-                             <p>NON ACTIVE</p>
+                             <a href="{% url 'LMSapp:active' i.id 'activate' %}">NON ACTIVE</a>
                           {% endif %}
                     </span>
                 </td>

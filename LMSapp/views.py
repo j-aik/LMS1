@@ -12,12 +12,12 @@ def home(request):
     return render(request,'home.html')
 
 def student(request):
-    f = request.user.username
-    return render(request, 'student.html',{'f':f})
+    username = request.user.username
+    return render(request, 'student.html',{'f':username})
 
 def parent(request):
-    f = request.user.username
-    return render(request, 'student.html',{'f':f})
+    username = request.user.username
+    return render(request, 'student.html',{'f':username})
 
 def staff(request):
     f = request.user.username
@@ -118,9 +118,7 @@ def admin1(request,id=0): #taken for the 2ndu
 #             form3 = UserEditForm( instance=user)
 #             form4 = UserEditForm( instance=parent_user)
 #         return render(request, 'studentedit_form.html', {'form': form, 'student': student,'form2': form2,'form3':form3,'form4':form4})
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Student, Parent, CustomUser
-from .forms import StudentEditForm, ParentEditForm, UserEditForm
+
 
 def adminstudent(request): # only for showing class
     student = Student.objects.all()
@@ -202,23 +200,73 @@ def u1login(request):
 def active(request, student_id, action):
     student = get_object_or_404(Student, id=student_id)
     user = student.user
-
+    print(action)
     if action == "activate":
-        user.is_active = True
-    elif action == "deactivate":
-        user.is_active = False
 
+        user.is_active = True
+        print()
+    elif action == "deactivate":
+        print(user.is_active,"before")
+        user.is_active = False
+        user.save()
+        print(user.is_active,"after")
     user.save()
     return adminstudent(request)
 
-def adminparent(request): # only for showing class
+def adminparent(request): # taken for 2ndu for showing parent details
     classst = ClassST.objects.all()
     parent = Parent.objects.all()
     return render(request,'adminparent.html',{'classst':classst,'parent':parent})
 
-def adminparent1(request,p): # for showing class class data about usercreation ,edit
-    parent = Parent.objects.filter(class_assigned__name=p)
-    return render(request,'adminparent1.html',{'parent':parent})
+def adminparent1(request,id): #taken for 2ndu for editing the users in here
+    parent = Parent.objects.get(id=id)
+    user_id = parent.user.id
+    user = get_object_or_404(CustomUser, id=user_id)
+    parent = get_object_or_404(Parent, user=user)
+
+    if request.method == "POST":
+        user_form = UserEditForm(request.POST, instance=user)
+        parent_form = ParentEditForm(request.POST, instance=parent)
+
+        if user_form.is_valid() and parent_form.is_valid():
+            user_form.save()
+            parent_form.save()
+            messages.success(request, "User and Parent details updated successfully!")
+            return adminparent(request)
+
+    else:
+        user_form = UserEditForm(instance=user)
+        parent_form = ParentEditForm(instance=parent)
+    return render(request,'adminparent1.html',{"user_form": user_form, "parent_form": parent_form})
+
+def adminparent1create(request): # taken for 2ndu  showing class class data about usercreation ,edit
+    classst = ClassST.objects.all()
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        phone_number = request.POST.get("phone_number")
+        address = request.POST.get("address")
+        class_assigned = request.POST.get("class_assigned")
+        new_class_name = request.POST.get("class1")
+        enrollment_date = request.POST.get("enrollment_date")
+
+
+        if not class_assigned and new_class_name:
+            new_class = ClassST.objects.create(name=new_class_name)
+            class_assigned = new_class.id  # Use the newly created class ID
+        user = CustomUser.objects.create(username=username, email=email,password="1234")
+
+        # Create Parent Details
+        parent = Parent.objects.create(
+            user=user,
+            phone_number=phone_number,
+            address=address,
+            class_assigned_id=class_assigned,
+            enrollment_date=enrollment_date
+        )
+        parent.save()
+        return adminparent(request)
+    return render(request,'adminparent1create.html',{'classst':classst,})
 
 def adminparentedit(request,p,m): # editform of thr parent
     f3 = Parent.objects.get(id=p)
@@ -321,6 +369,7 @@ def delete(request):
         Student.objects.filter(id__in=selected_ids).delete()
     return adminstudent(request)
 
+#2ndu for sorting students in here
 def class_detail(request, p):
     if request.method == "POST":
         sort_order = request.POST.get("sort_order", "descending")
@@ -339,7 +388,21 @@ def class_detail(request, p):
 
     return render(request, "students.html", {"student": student, "classst": classst, "p": p})  # Pass `p`
 
+#2ndu for editing parents in here
+def class_detail_parent(request, p):
+    if request.method == "POST":
+        sort_order = request.POST.get("sort_order", "descending")
+        return redirect("LMSapp:class_detail_parent", p=sort_order)
+    classst = sorted(ClassST.objects.all(), key=lambda x: x.name)
+    # Determine sorting order
+    if p == "ascending":
+        parent = Parent.objects.all().order_by("enrollment_date")
+    elif p == "descending":
+        parent = Parent.objects.all().order_by("-enrollment_date")
+    else:
+        parent = Parent.objects.filter(class_assigned__id=p).order_by("-enrollment_date")
 
+    return render(request, "adminparent.html", {"parent": parent, "classst": classst, "p": p})
 
 
 def adminstudent1(request,p):  # for showing class class data about usercreation ,edit
