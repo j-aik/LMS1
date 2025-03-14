@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'LMSapp',
+    'librarey',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

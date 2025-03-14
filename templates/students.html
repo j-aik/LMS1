@@ -534,9 +534,9 @@
                     <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
                         <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
                          {% if True %}
-                            <a href="">ACTIVE</a>
+                            <p>ACTIVE</p>
                          {% else %}
-                             <a href="" class="text-red-600 font-bold">NON ACTIVE</a>
+                             <p>NON ACTIVE</p>
                           {% endif %}
                     </span>
                 </td>
@@ -547,7 +547,7 @@
                         {% endfor %}
                         </tbody>
                          </table>
-
+                         <button type="submit" class="btn btn-danger mt-3">Delete Selected</button>
 </form>
                 </div>
                 <div class="card-footer flex-between flex-wrap">

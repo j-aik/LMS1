@@ -22,6 +22,7 @@ from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('LMSapp.url'))
+    path('', include('LMSapp.url')),
+    path('app1/', include('librarey.urls'))
 ]
 
